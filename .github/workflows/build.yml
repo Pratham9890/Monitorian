@@ -1,0 +1,33 @@
+name: Build Monitorian
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+    
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+    
+    - name: Restore NuGet packages
+      run: nuget restore Source/Monitorian.sln
+    
+    - name: Build Solution
+      run: msbuild Source/Monitorian.sln /p:Configuration=Release /p:Platform="Any CPU"
+    
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Monitorian-Build
+        path: Source/**/bin/Release/**/*
