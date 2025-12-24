@@ -153,6 +153,13 @@ public partial class MenuWindow : Window
 		_capturingTarget = target;
 		this.PreviewKeyDown -= OnPreviewKeyDownCapture;
 		this.PreviewKeyDown += OnPreviewKeyDownCapture;
+		
+		// Update label to show waiting state
+		if (target == HotkeyTarget.BrightnessDown)
+			DecreaseLabelDisplay.Text = "Press a key combination...";
+		else if (target == HotkeyTarget.BrightnessUp)
+			IncreaseLabelDisplay.Text = "Press a key combination...";
+		
 		// Bring window to foreground to ensure key routing
 		this.Activate();
 	}
@@ -161,6 +168,10 @@ public partial class MenuWindow : Window
 	{
 		this.PreviewKeyDown -= OnPreviewKeyDownCapture;
 		_capturingTarget = HotkeyTarget.None;
+		
+		// Restore label to show current hotkey
+		DecreaseLabelDisplay.Text = ViewModel.Settings.BrightnessDecreaseHotkey ?? "Not set";
+		IncreaseLabelDisplay.Text = ViewModel.Settings.BrightnessIncreaseHotkey ?? "Not set";
 	}
 
 	private void OnPreviewKeyDownCapture(object sender, System.Windows.Input.KeyEventArgs e)
@@ -396,6 +407,7 @@ public partial class MenuWindow : Window
 	{
 		_isUpdatingDropdowns = true;
 		ViewModel.Settings.BrightnessDecreaseHotkey = "Ctrl+Shift+F9";
+		DecreaseLabelDisplay.Text = "Ctrl+Shift+F9";
 		_isUpdatingDropdowns = false;
 	}
 
@@ -403,6 +415,7 @@ public partial class MenuWindow : Window
 	{
 		_isUpdatingDropdowns = true;
 		ViewModel.Settings.BrightnessIncreaseHotkey = "Ctrl+Shift+F10";
+		IncreaseLabelDisplay.Text = "Ctrl+Shift+F10";
 		_isUpdatingDropdowns = false;
 	}
 
