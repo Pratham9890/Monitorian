@@ -104,7 +104,6 @@
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
-		<!-- Brightness Hotkeys -->
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<StackPanel Orientation="Vertical" Margin="8,4">
 				<TextBlock Style="{StaticResource PlainTextStyle}" Text="Brightness Down Hotkey"/>
@@ -112,12 +111,11 @@
 					<Button Content="Change" Padding="6,2" Click="OnChangeBrightnessDownHotkey"/>
 					<Button Content="Reset" Padding="6,2" Margin="6,0,0,0" Click="OnResetBrightnessDownHotkey"/>
 				</StackPanel>
-				<!-- Dropdown picker: modifier + modifier + key -->
 				<StackPanel Orientation="Horizontal" Margin="0,4,0,0">
 					<ComboBox x:Name="DecreaseMod1" Width="80" SelectionChanged="OnDecreaseDropdownChanged" Style="{StaticResource {x:Type ComboBox}}"/>
-					<TextBlock Text="+" VerticalAlignment="Center" Margin="6,0" Foreground="{StaticResource App.Foreground.Plain}"/>
+					<TextBlock Text="+" VerticalAlignment="Center" Margin="6,0"/>
 					<ComboBox x:Name="DecreaseMod2" Width="80" SelectionChanged="OnDecreaseDropdownChanged" Style="{StaticResource {x:Type ComboBox}}"/>
-					<TextBlock Text="+" VerticalAlignment="Center" Margin="6,0" Foreground="{StaticResource App.Foreground.Plain}"/>
+					<TextBlock Text="+" VerticalAlignment="Center" Margin="6,0"/>
 					<ComboBox x:Name="DecreaseKeyCombo" Width="120" SelectionChanged="OnDecreaseDropdownChanged" Style="{StaticResource {x:Type ComboBox}}"/>
 				</StackPanel>
 				<TextBlock x:Name="DecreaseLabelDisplay" Style="{StaticResource PlainTextStyle}" Margin="0,4,0,0" FontSize="11"/>
@@ -131,12 +129,11 @@
 					<Button Content="Change" Padding="6,2" Click="OnChangeBrightnessUpHotkey"/>
 					<Button Content="Reset" Padding="6,2" Margin="6,0,0,0" Click="OnResetBrightnessUpHotkey"/>
 				</StackPanel>
-				<!-- Dropdown picker: modifier + modifier + key -->
 				<StackPanel Orientation="Horizontal" Margin="0,4,0,0">
 					<ComboBox x:Name="IncreaseMod1" Width="80" SelectionChanged="OnIncreaseDropdownChanged" Style="{StaticResource {x:Type ComboBox}}"/>
-					<TextBlock Text="+" VerticalAlignment="Center" Margin="6,0" Foreground="{StaticResource App.Foreground.Plain}"/>
+					<TextBlock Text="+" VerticalAlignment="Center" Margin="6,0"/>
 					<ComboBox x:Name="IncreaseMod2" Width="80" SelectionChanged="OnIncreaseDropdownChanged" Style="{StaticResource {x:Type ComboBox}}"/>
-					<TextBlock Text="+" VerticalAlignment="Center" Margin="6,0" Foreground="{StaticResource App.Foreground.Plain}"/>
+					<TextBlock Text="+" VerticalAlignment="Center" Margin="6,0"/>
 					<ComboBox x:Name="IncreaseKeyCombo" Width="120" SelectionChanged="OnIncreaseDropdownChanged" Style="{StaticResource {x:Type ComboBox}}"/>
 				</StackPanel>
 				<TextBlock x:Name="IncreaseLabelDisplay" Style="{StaticResource PlainTextStyle}" Margin="0,4,0,0" FontSize="11"/>
