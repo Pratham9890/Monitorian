@@ -108,12 +108,95 @@ public partial class MainWindow : Window
 		if (string.IsNullOrWhiteSpace(text))
 			return false;
 
+		static bool TryParseKeyPart(string part, out VirtualKeyCodes parsedKey)
+		{
+			parsedKey = 0;
+			if (string.IsNullOrWhiteSpace(part))
+				return false;
+
+			// Direct enum match first (covers letters, function keys, arrows, etc.)
+			if (Enum.TryParse(part, ignoreCase: true, out parsedKey))
+				return true;
+
+			var lower = part.ToLowerInvariant();
+
+			// Function keys written as "f5", "F12", etc.
+			if (lower.StartsWith("f") && int.TryParse(lower.Substring(1), out var fNum) && (fNum is >= 1 and <= 24))
+			{
+				parsedKey = (VirtualKeyCodes)((uint)VirtualKeyCodes.F1 + (uint)(fNum - 1));
+				return true;
+			}
+
+			// Single character keys (letters or digits)
+			if (part.Length == 1)
+			{
+				var ch = part[0];
+				if (char.IsLetter(ch))
+				{
+					parsedKey = (VirtualKeyCodes)char.ToUpperInvariant(ch);
+					return true;
+				}
+				if (char.IsDigit(ch))
+				{
+					parsedKey = (VirtualKeyCodes)ch;
+					return true;
+				}
+			}
+
+			switch (lower)
+			{
+				case "return":
+				case "enter":
+					parsedKey = VirtualKeyCodes.Enter; return true;
+				case "esc":
+				case "escape":
+					parsedKey = VirtualKeyCodes.Escape; return true;
+				case "space":
+				case "spacebar":
+					parsedKey = VirtualKeyCodes.Space; return true;
+				case "del":
+				case "delete":
+					parsedKey = VirtualKeyCodes.Delete; return true;
+				case "ins":
+				case "insert":
+					parsedKey = VirtualKeyCodes.Insert; return true;
+				case "pgup":
+				case "pageup":
+					parsedKey = VirtualKeyCodes.PageUp; return true;
+				case "pgdn":
+				case "pagedown":
+					parsedKey = VirtualKeyCodes.PageDown; return true;
+				case "home":
+					parsedKey = VirtualKeyCodes.Home; return true;
+				case "end":
+					parsedKey = VirtualKeyCodes.End; return true;
+				case "up":
+					parsedKey = VirtualKeyCodes.Up; return true;
+				case "down":
+					parsedKey = VirtualKeyCodes.Down; return true;
+				case "left":
+					parsedKey = VirtualKeyCodes.Left; return true;
+				case "right":
+					parsedKey = VirtualKeyCodes.Right; return true;
+				case "tab":
+					parsedKey = VirtualKeyCodes.Tab; return true;
+				case "backspace":
+					parsedKey = VirtualKeyCodes.Backspace; return true;
+				default:
+					return false;
+			}
+		}
+
 		try
 		{
-			var parts = text.Split('+', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+			var parts = text
+				.Split(new[] { '+' }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(x => x.Trim());
+
 			foreach (var part in parts)
 			{
-				switch (part.ToLowerInvariant())
+				var lower = part.ToLowerInvariant();
+				switch (lower)
 				{
 					case "ctrl":
 					case "control":
@@ -123,25 +206,16 @@ public partial class MainWindow : Window
 					case "win":
 					case "windows": modifiers |= ModifierKeyCodes.Windows; break;
 					default:
-						if (Enum.TryParse<VirtualKeyCodes>(part, ignoreCase: true, out var parsedKey))
+						if (TryParseKeyPart(part, out var parsedKey))
+						{
+							// Only one non-modifier key is allowed
+							if (key != 0)
+								return false;
 							key = parsedKey;
+						}
 						else
 						{
-							// Also support F-keys written as e.g. "F9"
-							if (part.Length >= 2 && (part[0] == 'F' || part[0] == 'f') && int.TryParse(part.Substring(1), out var fnum))
-							{
-								// Only support F9 and F10 as per existing enum
-								if (fnum == 9) key = VirtualKeyCodes.F9;
-								else if (fnum == 10) key = VirtualKeyCodes.F10;
-							}
-							else if (part.Length == 1)
-							{
-								var ch = char.ToUpperInvariant(part[0]);
-								if (ch >= 'A' && ch <= 'Z')
-								{
-									key = (VirtualKeyCodes)ch;
-								}
-							}
+							return false;
 						}
 						break;
 				}
