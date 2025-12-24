@@ -28,6 +28,7 @@ public partial class MenuWindow : Window
 	}
 
 	private HotkeyTarget _capturingTarget = HotkeyTarget.None;
+	private bool _isUpdatingDropdowns = false;
 
 	public MenuWindow(AppControllerCore controller, Point pivot)
 	{
@@ -290,30 +291,47 @@ public partial class MenuWindow : Window
 
 	private void SettingsOnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 	{
+		if (_isUpdatingDropdowns) return;
 		if (e.PropertyName == nameof(SettingsCore.BrightnessDecreaseHotkey))
 		{
+			_isUpdatingDropdowns = true;
 			ApplySelectionsFromHotkey(ViewModel.Settings.BrightnessDecreaseHotkey,
 				DecreaseMod1, DecreaseMod2, DecreaseKeyCombo);
+			DecreaseLabelDisplay.Text = ViewModel.Settings.BrightnessDecreaseHotkey ?? "Not set";
+			_isUpdatingDropdowns = false;
 		}
 		else if (e.PropertyName == nameof(SettingsCore.BrightnessIncreaseHotkey))
 		{
+			_isUpdatingDropdowns = true;
 			ApplySelectionsFromHotkey(ViewModel.Settings.BrightnessIncreaseHotkey,
 				IncreaseMod1, IncreaseMod2, IncreaseKeyCombo);
+			IncreaseLabelDisplay.Text = ViewModel.Settings.BrightnessIncreaseHotkey ?? "Not set";
+			_isUpdatingDropdowns = false;
 		}
 	}
 
 	private void OnDecreaseDropdownChanged(object sender, SelectionChangedEventArgs e)
 	{
+		if (_isUpdatingDropdowns) return;
 		var text = BuildHotkeyFromSelections(DecreaseMod1, DecreaseMod2, DecreaseKeyCombo);
 		if (!string.IsNullOrEmpty(text))
+		{
+			_isUpdatingDropdowns = true;
 			ViewModel.Settings.BrightnessDecreaseHotkey = text;
+			_isUpdatingDropdowns = false;
+		}
 	}
 
 	private void OnIncreaseDropdownChanged(object sender, SelectionChangedEventArgs e)
 	{
+		if (_isUpdatingDropdowns) return;
 		var text = BuildHotkeyFromSelections(IncreaseMod1, IncreaseMod2, IncreaseKeyCombo);
 		if (!string.IsNullOrEmpty(text))
+		{
+			_isUpdatingDropdowns = true;
 			ViewModel.Settings.BrightnessIncreaseHotkey = text;
+			_isUpdatingDropdowns = false;
+		}
 	}
 
 	private static string BuildHotkeyFromSelections(ComboBox mod1, ComboBox mod2, ComboBox keyCombo)
@@ -376,12 +394,16 @@ public partial class MenuWindow : Window
 
 	private void OnResetBrightnessDownHotkey(object sender, RoutedEventArgs e)
 	{
+		_isUpdatingDropdowns = true;
 		ViewModel.Settings.BrightnessDecreaseHotkey = "Ctrl+Shift+F9";
+		_isUpdatingDropdowns = false;
 	}
 
 	private void OnResetBrightnessUpHotkey(object sender, RoutedEventArgs e)
 	{
+		_isUpdatingDropdowns = true;
 		ViewModel.Settings.BrightnessIncreaseHotkey = "Ctrl+Shift+F10";
+		_isUpdatingDropdowns = false;
 	}
 
 	#endregion
