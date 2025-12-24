@@ -28,6 +28,7 @@
 			<TextBlock Margin="8,0"
 					   Style="{StaticResource PlainTextStyle}"
 					   Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime}"/>
+		</StackPanel>
 
 		<StackPanel x:Name="MenuItemsTop"/>
 
