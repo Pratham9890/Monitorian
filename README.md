@@ -1,4 +1,4 @@
-# Monitorian
+# Monitorian (with adjusting brightness using Keyboard support)
 
 ## TODO
 - [X] ~~Add UI for changing key binds~~
@@ -21,11 +21,6 @@ Change the brightness of monitors, including external ones, either individually 
 - Customizable monitor names (press and hold to edit)
 - Adjustable brightness and contrast ranges
 - Ambient light sensor support
-
-## Add-on Features (Microsoft Store version)
-### Hot Keys & Shortcut Keys
-- All hot keys for brightness can be switched to contrast
-- Dedicated hot keys for switching between brightness and contrast modes
 
 ### Command-Line Options
 Get or set brightness/contrast programmatically:
@@ -86,4 +81,5 @@ MIT License
 
 ## Libraries
 - [XamlBehaviors for WPF](https://github.com/microsoft/XamlBehaviorsWpf)
+
 
