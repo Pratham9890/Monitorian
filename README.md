@@ -1,12 +1,8 @@
-# Monitorian (Modified)
+# Monitorian
 
 ## TODO
-- [ ] Add UI for changing key binds
-- [ ] Create release/download link for this fork
-
-## Credits
-Original project by **emoacht** (emotom[atmark]pobox.com)  
-Original repository: https://github.com/emoacht/Monitorian
+- [X] ~~Add UI for changing key binds~~
+- [X] ~~Create release/download link for this fork~~
 
 ## Overview
 Monitorian is a Windows desktop tool to adjust the brightness of multiple monitors with ease.
@@ -20,6 +16,7 @@ Change the brightness of monitors, including external ones, either individually 
 
 ## Key Features
 - Adjust brightness of multiple monitors individually or together
+- Adjust brightness using keyboard (can be changed in the menu)
 - Touchpad support (precision touchpad required - swipe horizontally with two fingers)
 - Customizable monitor names (press and hold to edit)
 - Adjustable brightness and contrast ranges
@@ -66,6 +63,10 @@ Access hidden menu by **clicking the app title 3 times**:
 - `Make operation log` - enables operation.log recording
 - `Rescan monitors` - manually triggers monitor detection
 
+## Credits
+Original project by **emoacht** (emotom[atmark]pobox.com)  
+Original repository: https://github.com/emoacht/Monitorian
+
 ## Development
 ### Setup
 1. Install Visual Studio with:
@@ -85,3 +86,4 @@ MIT License
 
 ## Libraries
 - [XamlBehaviors for WPF](https://github.com/microsoft/XamlBehaviorsWpf)
+
