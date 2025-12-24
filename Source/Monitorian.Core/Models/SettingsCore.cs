@@ -106,6 +106,28 @@ public class SettingsCore : BindableBase
 	private bool _enablesContrast;
 
 	/// <summary>
+	/// Hotkey for decreasing brightness (e.g., "Ctrl+Shift+F9")
+	/// </summary>
+	[DataMember]
+	public string BrightnessDecreaseHotkey
+	{
+		get => _brightnessDecreaseHotkey;
+		set => SetProperty(ref _brightnessDecreaseHotkey, value);
+	}
+	private string _brightnessDecreaseHotkey = "Ctrl+Shift+F9"; // default
+
+	/// <summary>
+	/// Hotkey for increasing brightness (e.g., "Ctrl+Shift+F10")
+	/// </summary>
+	[DataMember]
+	public string BrightnessIncreaseHotkey
+	{
+		get => _brightnessIncreaseHotkey;
+		set => SetProperty(ref _brightnessIncreaseHotkey, value);
+	}
+	private string _brightnessIncreaseHotkey = "Ctrl+Shift+F10"; // default
+
+	/// <summary>
 	/// Monitor customizations by user
 	/// </summary>
 	[DataMember]

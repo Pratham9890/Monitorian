@@ -19,8 +19,8 @@ public partial class MainWindow : Window
 	private readonly StickWindowMover _mover;
 	public MainWindowViewModel ViewModel => (MainWindowViewModel)this.DataContext;
 
-	private readonly KeyboardHook _brightnessDownHook;
-	private readonly KeyboardHook _brightnessUpHook;
+	private KeyboardHook _brightnessDownHook;
+	private KeyboardHook _brightnessUpHook;
 
 	public MainWindow(AppControllerCore controller)
 	{
@@ -29,12 +29,10 @@ public partial class MainWindow : Window
 		InitializeComponent();
 
 		this.DataContext = new MainWindowViewModel(controller);
-		_brightnessDownHook = new KeyboardHook(Application.Current.MainWindow, VirtualKeyCodes.F9, ModifierKeyCodes.Control | ModifierKeyCodes.Shift);
-		_brightnessUpHook = new KeyboardHook(Application.Current.MainWindow, VirtualKeyCodes.F10, ModifierKeyCodes.Control | ModifierKeyCodes.Shift);
-		_brightnessDownHook.Triggered += _brightnessDownHook_Triggered;
-		_brightnessUpHook.Triggered += _brightnessUpHook_Triggered;
-		_mover = new StickWindowMover(this, controller.NotifyIconContainer.NotifyIcon);
 		_controller = controller;
+		CreateOrUpdateHotkeys();
+		_controller.Settings.PropertyChanged += SettingsOnPropertyChanged;
+		_mover = new StickWindowMover(this, controller.NotifyIconContainer.NotifyIcon);
 
 		_mover = new StickWindowMover(this, controller.NotifyIconContainer.NotifyIcon)
 		{
@@ -64,6 +62,98 @@ public partial class MainWindow : Window
 			it.IncrementBrightness(10, false);
 	}
 
+	private void SettingsOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName is nameof(SettingsCore.BrightnessDecreaseHotkey) ||
+			e.PropertyName is nameof(SettingsCore.BrightnessIncreaseHotkey))
+		{
+			CreateOrUpdateHotkeys();
+		}
+	}
+
+	private void CreateOrUpdateHotkeys()
+	{
+		// Dispose existing hooks
+		if (_brightnessDownHook is not null)
+		{
+			_brightnessDownHook.Triggered -= _brightnessDownHook_Triggered;
+			_brightnessDownHook.Dispose();
+			_brightnessDownHook = null;
+		}
+		if (_brightnessUpHook is not null)
+		{
+			_brightnessUpHook.Triggered -= _brightnessUpHook_Triggered;
+			_brightnessUpHook.Dispose();
+			_brightnessUpHook = null;
+		}
+
+		// Parse settings
+		if (TryParseHotkey(_controller.Settings.BrightnessDecreaseHotkey, out var decModifiers, out var decKey))
+		{
+			_brightnessDownHook = new KeyboardHook(Application.Current.MainWindow, decKey, decModifiers);
+			_brightnessDownHook.Triggered += _brightnessDownHook_Triggered;
+		}
+
+		if (TryParseHotkey(_controller.Settings.BrightnessIncreaseHotkey, out var incModifiers, out var incKey))
+		{
+			_brightnessUpHook = new KeyboardHook(Application.Current.MainWindow, incKey, incModifiers);
+			_brightnessUpHook.Triggered += _brightnessUpHook_Triggered;
+		}
+	}
+
+	private static bool TryParseHotkey(string text, out ModifierKeyCodes modifiers, out VirtualKeyCodes key)
+	{
+		modifiers = 0;
+		key = 0;
+		if (string.IsNullOrWhiteSpace(text))
+			return false;
+
+		try
+		{
+			var parts = text.Split('+', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+			foreach (var part in parts)
+			{
+				switch (part.ToLowerInvariant())
+				{
+					case "ctrl":
+					case "control":
+						modifiers |= ModifierKeyCodes.Control; break;
+					case "shift": modifiers |= ModifierKeyCodes.Shift; break;
+					case "alt": modifiers |= ModifierKeyCodes.Alt; break;
+					case "win":
+					case "windows": modifiers |= ModifierKeyCodes.Windows; break;
+					default:
+						if (Enum.TryParse<VirtualKeyCodes>(part, ignoreCase: true, out var parsedKey))
+							key = parsedKey;
+						else
+						{
+							// Also support F-keys written as e.g. "F9"
+							if (part.Length >= 2 && (part[0] == 'F' || part[0] == 'f') && int.TryParse(part.Substring(1), out var fnum))
+							{
+								// Only support F9 and F10 as per existing enum
+								if (fnum == 9) key = VirtualKeyCodes.F9;
+								else if (fnum == 10) key = VirtualKeyCodes.F10;
+							}
+							else if (part.Length == 1)
+							{
+								var ch = char.ToUpperInvariant(part[0]);
+								if (ch >= 'A' && ch <= 'Z')
+								{
+									key = (VirtualKeyCodes)ch;
+								}
+							}
+						}
+						break;
+				}
+			}
+			return key != 0; // require a key
+		}
+		catch
+		{
+			return false;
+		}
+	}
+
 	public override void OnApplyTemplate()
 	{
 		base.OnApplyTemplate();
@@ -84,10 +174,19 @@ public partial class MainWindow : Window
 
 	protected override void OnClosed(EventArgs e)
 	{
-		_brightnessDownHook.Triggered -= _brightnessDownHook_Triggered;
-		_brightnessUpHook.Triggered -= _brightnessUpHook_Triggered;
-		_brightnessUpHook.Dispose();
-		_brightnessDownHook.Dispose();
+		if (_brightnessDownHook is not null)
+		{
+			_brightnessDownHook.Triggered -= _brightnessDownHook_Triggered;
+			_brightnessDownHook.Dispose();
+			_brightnessDownHook = null;
+		}
+		if (_brightnessUpHook is not null)
+		{
+			_brightnessUpHook.Triggered -= _brightnessUpHook_Triggered;
+			_brightnessUpHook.Dispose();
+			_brightnessUpHook = null;
+		}
+		_controller.Settings.PropertyChanged -= SettingsOnPropertyChanged;
 		BindingOperations.ClearBinding(
 			this,
 			UsesLargeElementsProperty);

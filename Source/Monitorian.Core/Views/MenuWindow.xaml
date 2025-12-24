@@ -104,6 +104,21 @@
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
+		<!-- Brightness Hotkeys -->
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<StackPanel Orientation="Vertical" Margin="8,4">
+				<TextBlock Style="{StaticResource PlainTextStyle}" Text="Brightness Down Hotkey"/>
+				<TextBox Text="{Binding Settings.BrightnessDecreaseHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			</StackPanel>
+		</ContentControl>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<StackPanel Orientation="Vertical" Margin="8,4">
+				<TextBlock Style="{StaticResource PlainTextStyle}" Text="Brightness Up Hotkey"/>
+				<TextBox Text="{Binding Settings.BrightnessIncreaseHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			</StackPanel>
+		</ContentControl>
+
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
